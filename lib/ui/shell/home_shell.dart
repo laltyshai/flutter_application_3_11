@@ -7,6 +7,7 @@ import '../messy_can/messy_can_screen.dart';
 
 /// Bottom navigation with the four main areas of the app.
 /// Uses an [IndexedStack] so each tab keeps its scroll/state when switching.
+/// Stateful only for the selected tab index, which is local, visual-only state.
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
 

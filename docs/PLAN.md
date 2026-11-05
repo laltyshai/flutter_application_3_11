@@ -22,8 +22,8 @@ No backend. All data lives in a local database.
 
 | Area | Choice | Why |
 |---|---|---|
-| State management | `flutter_riverpod` (Notifier / AsyncNotifier, no codegen) | README prefers Riverpod; clean logic/UI split, easy to test |
-| Storage | `hive_ce` + `hive_ce_flutter` | Maintained fork of Hive; fast key-value boxes, no SQL schema to migrate. Tasks stored as JSON maps, so no adapter codegen is needed |
+| State management | `flutter_riverpod` (`Notifier`, no codegen) | README prefers Riverpod; clean logic/UI split, easy to test |
+| Storage | `hive_ce` + `hive_ce_flutter` | Maintained fork of Hive; fast key-value boxes, no SQL schema to migrate. Tasks stored as JSON strings, so no adapter codegen is needed |
 | IDs | `uuid` | README requires UUID ids |
 | Calendar | `table_calendar` | Ready-made month/week strip with day selection |
 | Drag & drop | Built-in `LongPressDraggable` + `DragTarget` on a horizontal `PageView` of columns | Covers both "drag-and-drop" and "horizontal swipe" without extra packages |
@@ -57,7 +57,7 @@ lib/
     services/backup_service.dart  # JSON/CSV export + import (restore/merge)
   providers/
     repository_providers.dart
-    tasks_provider.dart          # AsyncNotifier<List<Task>> with CRUD
+    tasks_provider.dart          # Notifier<List<Task>> with CRUD, synced to box changes
     filter_provider.dart         # labels/categories/priority filter + sort mode
     board_provider.dart          # derived: filtered + sorted tasks per column
     calendar_provider.dart       # selected day + tasks for that day
@@ -111,7 +111,7 @@ class Task {
 
 - Immutable classes with `copyWith`, `toJson`, `fromJson`, `==`/`hashCode`.
 - Enums serialized by `name` so backups stay readable and stable.
-- Box layout: `tasks` box (key = task id, value = JSON map), `settings` box (single key).
+- Box layout: `tasks` box (key = task id, value = task JSON string), `settings` box (keys `appSettings` and `schemaVersion`).
 - A `schemaVersion` field in the settings box and in backup files for future migrations.
 
 ---
@@ -147,11 +147,11 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] `HomeShell` with bottom `NavigationBar` and four placeholder tabs.
 
 ### Phase 2 — Data layer (deliverable #2)
-- [ ] `Task`, `Subtask`, enums, `AppSettings` with JSON round-trip.
-- [ ] `hive_setup.dart`: `Hive.initFlutter()`, open boxes before `runApp`.
-- [ ] `TaskRepository`: `getAll`, `watch` (stream of box changes), `upsert`, `delete`, `clear`, `putAll`.
-- [ ] Providers: repository providers + `tasksProvider` (AsyncNotifier with add/update/delete/move/toggleSubtask).
-- [ ] Tests: model JSON round-trip, repository CRUD against a temp Hive dir.
+- [x] `Task`, `Subtask`, enums, `AppSettings` with JSON round-trip (bad input → `FormatException`, used later by import validation).
+- [x] `hive_setup.dart`: `Hive.initFlutter()`, open boxes before `runApp`; `main` records the schema version.
+- [x] `TaskRepository`: `getAll` (skips corrupt entries), `getById`, `watch`, `upsert`, `upsertAll`, `delete`, `clear`, `replaceAll`. `SettingsRepository`: `load`/`save`, `ensureSchema`.
+- [x] Providers: `hiveBoxesProvider` (overridden in `main`), repository providers, `clockProvider`, `tasksProvider` (`Notifier` with add/save/delete/moveTo/toggleSubtask, reloads on box changes), `settingsProvider`.
+- [x] Tests: model JSON round-trip, repository CRUD against a temp Hive dir, notifier behavior via `ProviderContainer`.
 
 ### Phase 3 — Task editor & card
 - [ ] `TaskEditorScreen`: title, description, status, priority, category, labels (chips input), due date picker, subtasks list (add/check/remove).
