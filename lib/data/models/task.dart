@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../core/utils/date_utils.dart';
 import 'subtask.dart';
 
 enum TaskStatus {
@@ -133,6 +134,12 @@ class Task {
   /// To Do or In Progress — candidates for the random picker.
   bool get isPending =>
       status == TaskStatus.todo || status == TaskStatus.inProgress;
+
+  /// Pending and due on a day before [now]'s day.
+  bool isOverdueAt(DateTime now) {
+    final due = dueDate;
+    return due != null && isPending && AppDates.isOverdue(due, now);
+  }
 
   Task copyWith({
     String? title,
