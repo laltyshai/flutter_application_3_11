@@ -183,18 +183,20 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] Tests: Messy Can notifier (add/edit/delete/undo/promote), randomizer on empty/one-item/multi lists, screen widget tests (entry, quick edit, swipe + Undo, promote, randomizer).
 
 ### Phase 7 — Backup: export & import
-- [ ] Backup JSON format:
+- [x] Backup JSON format (`JsonBackupCodec`):
   ```json
   { "app": "flutter_application_3_11", "schemaVersion": 1,
     "exportedAt": "...", "settings": { ... }, "tasks": [ ... ] }
   ```
-- [ ] CSV export: one row per task; `labels` joined with `|`, `subtasks` as an embedded JSON string column.
-- [ ] Export screen: choose JSON or CSV → write to app documents dir → *Share* via `share_plus`.
-- [ ] Import screen: paste text area **or** file picker (`.json`, `.csv`) → parse + validate → preview ("12 tasks, 3 new, 9 existing") → choose:
-  - **Restore**: clear and replace everything.
-  - **Merge**: upsert by `id`, keep the newer `updatedAt` on conflict.
-- [ ] Clear error messages for malformed input; never write partially on failure.
-- [ ] Tests: JSON and CSV round-trip, merge conflict rules, invalid input.
+- [x] CSV export (`CsvBackupCodec`): one row per task; `labels` joined with `|`, `subtasks` as an embedded JSON string column. No settings in CSV.
+- [x] Formats are `BackupFormat` entries, each with its own `BackupCodec` (new format = new entry + codec).
+- [x] Export screen: choose JSON or CSV → write to app documents dir (`DocumentsBackupFileStore`) → *Share* via `share_plus` (`SystemBackupSharer`).
+- [x] Import screen: paste text area **or** file picker (`.json`, `.csv`) → format auto-detected → parse + validate → preview ("12 tasks, 3 new, 9 existing") → choose:
+  - **Restore** (asks to confirm): clear and replace everything, including settings when the backup has them.
+  - **Merge**: upsert by `id`, keep the newer `updatedAt` on conflict (ties keep local); categories/labels are unioned, theme kept.
+- [x] Clear error messages for malformed input (bad JSON, other app, newer schema, "Task 3: …", duplicate ids, missing CSV columns); the whole file is validated before anything is written.
+- [x] Platform glue behind interfaces in `data/services/backup_io.dart`, overridden with fakes in tests (`test/helpers/fake_backup_io.dart`).
+- [x] Tests: JSON and CSV round-trip (quotes, commas, newlines), invalid input, merge/preview rules, export → wipe → restore identical for both formats, export/import screen widget tests.
 
 ### Phase 8 — Polish & release prep
 - [ ] Empty states for every screen; loading/error states from `AsyncValue`.

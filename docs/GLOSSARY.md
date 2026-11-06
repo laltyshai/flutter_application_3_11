@@ -73,3 +73,15 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **Undo (restore)** | After a delete, the deleted `Task` is kept in the snackbar's callback and saved back exactly as it was. | `MessyCanNotifier.undoDelete` → `TasksNotifier.restore` |
 | **Dismissible** | Flutter widget that lets you swipe a list item away; `onDismissed` runs after the swipe. | idea list in `lib/ui/messy_can/messy_can_screen.dart` |
 | **Record** | A small unnamed bundle of values, like `(title: 'x', note: 'y')`. Used to return two values from a dialog without a new class. | `showIdeaEditDialog` |
+
+## Backup
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Codec** | A pair of functions that turn data into text (`encode`) and back (`decode`). One per file format. | `BackupCodec`, `JsonBackupCodec`, `CsvBackupCodec` |
+| **Schema version** | A number saying which layout the stored/backup data uses, so old backups can be migrated and newer ones rejected. | `SettingsRepository.currentSchemaVersion` |
+| **Restore** | Delete all current data and replace it with the backup. | `ImportMode.restore`, `TasksNotifier.replaceAll` |
+| **Merge** | Keep current data; add tasks with new ids and overwrite ones whose backup copy has a later `updatedAt`. | `ImportMode.merge`, `tasksToMerge` |
+| **Preview** | Counts shown before importing: total, new, existing, newer. | `ImportPreview` |
+| **Interface / fake** | An `abstract interface class` lists methods without code; the app uses a real implementation (file system, share sheet) and tests pass a fake one that records calls. | `BackupFileStore` / `FakeBackupFileStore` |
+| **Share intent** | Android's "Share to…" sheet that sends a file to another app. | `SystemBackupSharer` |
