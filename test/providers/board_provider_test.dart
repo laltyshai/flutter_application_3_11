@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter_application_3_11/data/models/board_filter.dart';
 import 'package:flutter_application_3_11/data/models/task.dart';
 import 'package:flutter_application_3_11/providers/board_provider.dart';
+import 'package:flutter_application_3_11/providers/random_provider.dart';
 import 'package:flutter_application_3_11/providers/repository_providers.dart';
 import 'package:flutter_application_3_11/providers/settings_provider.dart';
 import 'package:flutter_application_3_11/providers/tasks_provider.dart';

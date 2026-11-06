@@ -176,11 +176,11 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] Tests: `groupByDueDay` (00:00/23:59 boundaries, UTC due dates, sort order), calendar notifier, calendar screen widget tests (day switch, quick-add, checkbox, week/month).
 
 ### Phase 6 — Messy Can
-- [ ] Fast entry field at top (title only, optional note); list/grid of ideas.
-- [ ] Edit inline or in editor; swipe to delete with *Undo* snackbar.
-- [ ] **Promote**: pick target status/priority/due date → status changes from `messyCan` to board status.
-- [ ] **Randomizer** button → same dialog style, actions *Promote*, *Edit*, *Draw again*.
-- [ ] Tests: promote flow, randomizer on empty/one-item lists.
+- [x] Fast entry card at top (`IdeaEntryField`: title + optional note, Enter keeps focus for the next idea); list of ideas (`IdeaCard`), newest first.
+- [x] Quick edit in a dialog (`showIdeaEditDialog`) or "Open in editor" from the card menu; swipe to delete with *Undo* snackbar (`TasksNotifier.restore` puts it back unchanged).
+- [x] **Promote** (`PromoteSheet`): pick column, priority, due date → `MessyCanNotifier.promote` changes status from `messyCan` to the board column.
+- [x] **Randomizer** app-bar action → `showRandomPickDialog` "Fished out of the can!" with *Draw again*, *Edit*, *Promote*. The random picker class is shared with the board (`RandomTaskPicker` in `providers/random_provider.dart`).
+- [x] Tests: Messy Can notifier (add/edit/delete/undo/promote), randomizer on empty/one-item/multi lists, screen widget tests (entry, quick edit, swipe + Undo, promote, randomizer).
 
 ### Phase 7 — Backup: export & import
 - [ ] Backup JSON format:

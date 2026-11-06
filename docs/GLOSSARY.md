@@ -63,3 +63,13 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **Selected / focused day** | Selected = the day whose agenda is shown. Focused = which week/month page the calendar is showing. | `CalendarState` in `lib/providers/calendar_provider.dart` |
 | **Agenda** | The list of tasks due on the selected day. | `selectedDayTasksProvider`, `AgendaList` |
 | **`select`** | `ref.watch(p.select((s) => s.x))` redraws/recomputes only when that one field changes. | `selectedDayTasksProvider` watches only `selectedDay` |
+
+## Messy Can
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Idea** | A task with status `messyCan`: a quick thought that isn't on the board yet. | `messyCanProvider` in `lib/providers/messy_can_provider.dart` |
+| **Promote** | Move an idea onto the board by changing its status (and choosing priority/due date). | `Promotion`, `MessyCanNotifier.promote`, `PromoteSheet` |
+| **Undo (restore)** | After a delete, the deleted `Task` is kept in the snackbar's callback and saved back exactly as it was. | `MessyCanNotifier.undoDelete` → `TasksNotifier.restore` |
+| **Dismissible** | Flutter widget that lets you swipe a list item away; `onDismissed` runs after the swipe. | idea list in `lib/ui/messy_can/messy_can_screen.dart` |
+| **Record** | A small unnamed bundle of values, like `(title: 'x', note: 'y')`. Used to return two values from a dialog without a new class. | `showIdeaEditDialog` |

@@ -68,6 +68,13 @@ class TasksNotifier extends Notifier<List<Task>> {
     _reload();
   }
 
+  /// Puts back a task exactly as it was (e.g. "Undo" after delete),
+  /// without bumping `updatedAt`.
+  Future<void> restore(Task task) async {
+    await _repo.upsert(task);
+    _reload();
+  }
+
   Future<void> delete(String id) async {
     await _repo.delete(id);
     _reload();
