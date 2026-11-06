@@ -1,3 +1,4 @@
+import 'dart:typed_data';
 import 'dart:io';
 
 import 'package:flutter_application_3_11/data/db/hive_setup.dart';
@@ -26,3 +27,21 @@ class TestHive {
     await _dir.delete(recursive: true);
   }
 }
+
+/// In-memory Hive boxes (no disk I/O), safe inside `testWidgets`' fake clock.
+/// Open in `setUp`, close with [closeMemoryHive] in `tearDown`.
+Future<HiveBoxes> openMemoryHive() async {
+  final id = _memoryBoxCounter++;
+  final boxes = await Future.wait([
+    Hive.openBox<String>('mem_tasks_$id', bytes: Uint8List(0)),
+    Hive.openBox<String>('mem_settings_$id', bytes: Uint8List(0)),
+  ]);
+  return HiveBoxes(tasks: boxes[0], settings: boxes[1]);
+}
+
+Future<void> closeMemoryHive(HiveBoxes boxes) async {
+  await boxes.tasks.close();
+  await boxes.settings.close();
+}
+
+int _memoryBoxCounter = 0;
