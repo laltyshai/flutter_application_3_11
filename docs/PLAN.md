@@ -154,9 +154,12 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] Tests: model JSON round-trip, repository CRUD against a temp Hive dir, notifier behavior via `ProviderContainer`.
 
 ### Phase 3 — Task editor & card
-- [ ] `TaskEditorScreen`: title, description, status, priority, category, labels (chips input), due date picker, subtasks list (add/check/remove).
-- [ ] `TaskCard`: title, priority indicator, category badge, subtask ratio (e.g. `2/5`), due date.
-- [ ] Widget tests for the card.
+- [x] `TaskEditorScreen` (`ConsumerWidget`): title, description, status, priority, category (chips), labels (chips + suggestions from settings), due date picker, subtasks (add/check/remove). Save disabled without a title; delete with confirm; "Discard changes?" on back when edited.
+- [x] Editor logic in `TaskEditorNotifier` (`providers/task_editor_provider.dart`, autoDispose family keyed by `TaskEditorArgs` — edit by id, or create with status/due-date presets for Calendar and Messy Can). New labels/categories are saved to settings.
+- [x] `TaskCard`: title, priority indicator, category badge, subtask ratio (e.g. `2/5`), relative due date with "Overdue" for pending tasks.
+- [x] Reusable stateless widgets in `ui/widgets/`: `PriorityIndicator`, `CategoryBadge`, `ChoiceChipGroup<T>`, `LabelInput`, `DueDateField`, `showConfirmDialog`; `AddItemField` (stateful only for its text controller).
+- [x] Interim Board tab: list of board tasks (`boardTasksProvider`) + "New task" FAB, so the editor is reachable until Phase 4.
+- [x] Tests: date helpers, editor notifier, `TaskCard` widget tests, editor create/discard/edit/delete widget tests (in-memory Hive via `test/helpers/`).
 
 ### Phase 4 — Kanban board
 - [ ] Horizontal `PageView` with columns To Do · In Progress · Done (column header shows count).

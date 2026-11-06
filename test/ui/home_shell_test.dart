@@ -5,10 +5,23 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_application_3_11/app.dart';
 import 'package:flutter_application_3_11/core/theme/app_colors.dart';
 import 'package:flutter_application_3_11/core/theme/app_theme.dart';
+import 'package:flutter_application_3_11/data/db/hive_setup.dart';
+import 'package:flutter_application_3_11/providers/repository_providers.dart';
+
+import '../helpers/test_hive.dart';
 
 void main() {
+  late HiveBoxes boxes;
+  setUp(() async => boxes = await openMemoryHive());
+  tearDown(() => closeMemoryHive(boxes));
+
   Future<void> pumpApp(WidgetTester tester) async {
-    await tester.pumpWidget(const ProviderScope(child: TaskTrackerApp()));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [hiveBoxesProvider.overrideWithValue(boxes)],
+        child: const TaskTrackerApp(),
+      ),
+    );
     await tester.pumpAndSettle();
   }
 
