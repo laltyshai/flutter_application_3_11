@@ -90,4 +90,6 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 
 | Term | Meaning | In code |
 |---|---|---|
+| **Board layout** | How the board shows statuses: Rows (each status a horizontal strip of cards, up to 2 rows, swipe sideways) or Columns (each status a page you swipe between). Saved in settings. | `BoardLayout`, `KanbanRows`, `KanbanBoard` |
+| **Option dialog** | A reusable pop-up listing choices with a check on the current one; Settings uses it for Theme and Board layout. | `showOptionDialog` in `lib/ui/widgets/option_dialog.dart` |
 | **Theme mode** | Which colors the app uses: System (follow the phone), Light or Dark. Saved in the settings box and read by `MaterialApp.themeMode`. | `AppSettings.themeMode`, `lib/app.dart`, `showThemeModeDialog` |

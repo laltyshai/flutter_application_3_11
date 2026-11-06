@@ -66,7 +66,7 @@ lib/
   ui/
     shell/home_shell.dart        # NavigationBar: Board · Calendar · Messy Can · Settings
     settings/settings_screen.dart # Theme + Backup & restore entry
-    settings/theme_mode_dialog.dart
+    settings/setting_options.dart # Theme + board layout choices
     board/board_screen.dart
     board/kanban_column.dart
     board/filter_sort_sheet.dart
@@ -168,6 +168,7 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] Long-press drag a card onto another column → status change; auto-scroll to neighbor page when dragging near the edge (one flip per 700 ms).
 - [x] Filter/sort bottom sheet (`FilterSortSheet`): multi-select labels, categories, priorities; sort by due date / priority / created date (asc/desc). Active filters shown as removable chips (`ActiveFilterChips`). Filter state is session-only (`boardFilterProvider`).
 - [x] **Random Idea Picker** app-bar action: random task from To Do + In Progress (respecting active filters) → `showRandomPickDialog` "Your Next Task to Tackle!" with *Open*, *Start (move to In Progress)*, *Pick again* (never the same task twice in a row).
+- [x] Board layout setting (`AppSettings.boardLayout`, Settings → Board layout): **Rows** (default, `KanbanRows`: one section per status stacked vertically, cards in up to 2 rows that scroll sideways, vertical auto-scroll while dragging) or **Columns** (`KanbanBoard`). Shared pieces in `ui/board/board_parts.dart`.
 - [x] Tests: `BoardFilter` match/sort as pure functions, `pickRandom` with seeded `Random`, board providers, board widget tests (columns, drag, filter chips, random dialog).
 
 ### Phase 5 — Calendar
