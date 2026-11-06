@@ -1,9 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_3_11/data/db/hive_setup.dart';
+import 'package:flutter_application_3_11/data/models/app_settings.dart';
 import 'package:flutter_application_3_11/data/models/task.dart';
+import 'package:flutter_application_3_11/providers/board_provider.dart';
+import 'package:flutter_application_3_11/providers/settings_provider.dart';
 import 'package:flutter_application_3_11/providers/tasks_provider.dart';
 import 'package:flutter_application_3_11/ui/board/board_screen.dart';
+import 'package:flutter_application_3_11/ui/board/kanban_board.dart';
+import 'package:flutter_application_3_11/ui/board/kanban_rows.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -17,9 +22,11 @@ void main() {
 
   Future<ProviderContainer> pumpBoard(
     WidgetTester tester,
-    List<({String title, TaskStatus status, TaskPriority priority})> seed,
-  ) async {
+    List<({String title, TaskStatus status, TaskPriority priority})> seed, {
+    BoardLayout layout = BoardLayout.rows,
+  }) async {
     final container = await tester.pumpApp(const BoardScreen(), boxes: boxes);
+    await container.read(settingsProvider.notifier).setBoardLayout(layout);
     for (final t in seed) {
       await container
           .read(tasksProvider.notifier)
@@ -38,12 +45,83 @@ void main() {
   Task byTitle(ProviderContainer c, String title) =>
       c.read(tasksProvider).firstWhere((t) => t.title == title);
 
+  testWidgets('rows layout is the default', (tester) async {
+    final container = await tester.pumpApp(const BoardScreen(), boxes: boxes);
+    await container.read(tasksProvider.notifier).add(title: 'A');
+    await tester.pumpAndSettle();
+    expect(find.byType(KanbanRows), findsOneWidget);
+    expect(find.byType(KanbanBoard), findsNothing);
+  });
+
+  testWidgets('rows: statuses with counts, cards split into two rows', (
+    tester,
+  ) async {
+    final container = await pumpBoard(tester, [
+      for (final t in ['A', 'B', 'C']) seed(t),
+      seed('D', status: TaskStatus.inProgress),
+    ]);
+
+    expect(find.bySemanticsLabel('To Do, 3 tasks'), findsOneWidget);
+    expect(find.bySemanticsLabel('In Progress, 1 tasks'), findsOneWidget);
+    // 3 To Do cards → two rows: first row has 2 cards, second row 1.
+    final ys = {
+      for (final t in ['A', 'B', 'C']) t: tester.getTopLeft(find.text(t)).dy,
+    };
+    expect(ys.values.toSet(), hasLength(2));
+    // Board order [first, second, third]: first and third share the top
+    // row, second is below (cards are dealt column by column).
+    final order = [
+      for (final t in container.read(boardColumnsProvider)[TaskStatus.todo]!)
+        t.title,
+    ];
+    expect(ys[order[0]], ys[order[2]]);
+    expect(ys[order[1]]!, greaterThan(ys[order[0]]!));
+
+    // Done is below the fold on the 800x600 test screen.
+    await tester.scrollUntilVisible(
+      find.text('No tasks'),
+      200,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Done'), findsOneWidget);
+    expect(find.text('No tasks'), findsOneWidget);
+  });
+
+  testWidgets('rows: long-press drag a card onto another status', (
+    tester,
+  ) async {
+    final container = await pumpBoard(tester, [
+      seed('Drag me'),
+      seed('Doing', status: TaskStatus.inProgress),
+    ]);
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('Drag me')),
+    );
+    await tester.pump(kLongPressTimeout + const Duration(milliseconds: 50));
+    await gesture.moveTo(tester.getCenter(find.text('Doing')));
+    await tester.pump();
+    await gesture.up();
+    await tester.pumpAndSettle();
+
+    expect(byTitle(container, 'Drag me').status, TaskStatus.inProgress);
+    expect(find.bySemanticsLabel('In Progress, 2 tasks'), findsOneWidget);
+  });
+
+  testWidgets('rows: tapping a card opens the editor', (tester) async {
+    await pumpBoard(tester, [seed('Open me')]);
+    await tester.tap(find.text('Open me'));
+    await tester.pumpAndSettle();
+    expect(find.text('Edit task'), findsOneWidget);
+  });
+
   testWidgets('shows columns with task counts', (tester) async {
     await pumpBoard(tester, [
       seed('A'),
       seed('B'),
       seed('C', status: TaskStatus.inProgress),
-    ]);
+    ], layout: BoardLayout.columns);
+    expect(find.byType(KanbanBoard), findsOneWidget);
 
     expect(find.bySemanticsLabel('To Do, 2 tasks'), findsOneWidget);
     expect(find.bySemanticsLabel('In Progress, 1 tasks'), findsOneWidget);
@@ -54,7 +132,9 @@ void main() {
   testWidgets('long-press drag to the edge moves a card to the next column', (
     tester,
   ) async {
-    final container = await pumpBoard(tester, [seed('Drag me')]);
+    final container = await pumpBoard(tester, [
+      seed('Drag me'),
+    ], layout: BoardLayout.columns);
 
     final gesture = await tester.startGesture(
       tester.getCenter(find.text('Drag me')),

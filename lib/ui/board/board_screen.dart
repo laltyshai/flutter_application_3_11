@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/models/app_settings.dart';
 import '../../data/models/task.dart';
 import '../../providers/board_provider.dart';
 import '../../providers/repository_providers.dart';
+import '../../providers/settings_provider.dart';
 import '../../providers/task_editor_provider.dart';
 import '../../providers/tasks_provider.dart';
 import '../task/task_editor_screen.dart';
@@ -13,8 +15,10 @@ import '../widgets/task_card.dart';
 import 'active_filter_chips.dart';
 import 'filter_sort_sheet.dart';
 import 'kanban_board.dart';
+import 'kanban_rows.dart';
 
-/// Kanban board: To Do · In Progress · Done columns with drag-and-drop,
+/// Kanban board: To Do · In Progress · Done as rows or columns (see
+/// Settings) with drag-and-drop,
 /// filter/sort, and the random "next task" picker.
 class BoardScreen extends ConsumerWidget {
   const BoardScreen({super.key});
@@ -26,6 +30,10 @@ class BoardScreen extends ConsumerWidget {
     final filter = ref.watch(boardFilterProvider);
     final filterNotifier = ref.read(boardFilterProvider.notifier);
     final now = ref.watch(clockProvider)();
+    final layout = ref.watch(settingsProvider.select((s) => s.boardLayout));
+    void onOpen(Task task) => _open(context, task);
+    void onMove(Task task, TaskStatus to) =>
+        ref.read(tasksProvider.notifier).moveTo(task.id, to);
 
     return Scaffold(
       appBar: AppBar(
@@ -70,13 +78,21 @@ class BoardScreen extends ConsumerWidget {
                     onClear: filterNotifier.clearFilters,
                   ),
                 Expanded(
-                  child: KanbanBoard(
-                    columns: columns,
-                    now: now,
-                    onOpen: (task) => _open(context, task),
-                    onMove: (task, to) =>
-                        ref.read(tasksProvider.notifier).moveTo(task.id, to),
-                  ),
+                  // Chosen in Settings → Board layout.
+                  child: switch (layout) {
+                    BoardLayout.rows => KanbanRows(
+                      columns: columns,
+                      now: now,
+                      onOpen: onOpen,
+                      onMove: onMove,
+                    ),
+                    BoardLayout.columns => KanbanBoard(
+                      columns: columns,
+                      now: now,
+                      onOpen: onOpen,
+                      onMove: onMove,
+                    ),
+                  },
                 ),
               ],
             ),
