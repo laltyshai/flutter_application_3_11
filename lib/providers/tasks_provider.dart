@@ -80,6 +80,10 @@ class TasksNotifier extends Notifier<List<Task>> {
     await save(task.copyWith(status: status));
   }
 
+  /// Checks a task off (→ Done) or un-checks it (→ To Do).
+  Future<void> setDone(String id, bool done) =>
+      moveTo(id, done ? TaskStatus.done : TaskStatus.todo);
+
   Future<void> toggleSubtask(String taskId, String subtaskId) async {
     final task = byId(taskId);
     if (task == null) return;
