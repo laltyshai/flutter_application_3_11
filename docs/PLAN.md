@@ -169,10 +169,11 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] Tests: `BoardFilter` match/sort as pure functions, `pickRandom` with seeded `Random`, board providers, board widget tests (columns, drag, filter chips, random dialog).
 
 ### Phase 5 — Calendar
-- [ ] `table_calendar` week/month toggle with dot markers on days that have tasks.
-- [ ] Agenda list for the selected day (tasks whose `dueDate` falls on that day), tap to edit, checkbox to mark done.
-- [ ] Quick-add bar at the bottom: type title → Enter creates a To Do task with `dueDate = selectedDay`.
-- [ ] Tests: "tasks for day" selector (timezone/day-boundary cases).
+- [x] `table_calendar` (`TaskCalendar`) with a week/month toggle in the app bar, "Go to today", and dot markers on days that have tasks. Calendar and agenda scroll together so short screens still reach the agenda.
+- [x] Agenda list (`AgendaList`) for the selected day (tasks whose `dueDate` falls on that local day; unfinished first, then priority), tap to edit, checkbox to mark done/undone (`TasksNotifier.setDone`).
+- [x] Quick-add bar (`QuickAddBar`) pinned at the bottom: type title → Enter creates a To Do task with `dueDate = selectedDay` (`CalendarNotifier.quickAdd`).
+- [x] State in `CalendarNotifier` (`providers/calendar_provider.dart`): selected day, focused page, span. Days from `table_calendar` arrive as UTC midnight and are normalized by their date fields; due dates are grouped by `AppDates.localDayOf`.
+- [x] Tests: `groupByDueDay` (00:00/23:59 boundaries, UTC due dates, sort order), calendar notifier, calendar screen widget tests (day switch, quick-add, checkbox, week/month).
 
 ### Phase 6 — Messy Can
 - [ ] Fast entry field at top (title only, optional note); list/grid of ideas.

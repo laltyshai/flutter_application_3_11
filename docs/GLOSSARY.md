@@ -53,3 +53,13 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **DragTarget** | An area that accepts a dragged value when you let go over it. | each `KanbanColumn` accepts a `Task` and calls `onMove` |
 | **Bottom sheet** | A panel that slides up from the bottom of the screen. | `FilterSortSheet.show` |
 | **Seeded Random** | `Random(42)` always produces the same sequence, so tests of random picking are repeatable. | `randomProvider` override in `test/providers/board_provider_test.dart` |
+
+## Dates & calendar
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Local day** | The calendar date a moment falls on in the phone's time zone, stored as local midnight. Used as the key for grouping tasks by day. | `AppDates.localDayOf`, `groupByDueDay` |
+| **UTC** | Time-zone-free "world time". A `DateTime` parsed from a string ending in `Z` is UTC; `table_calendar` also hands out days as UTC midnight. `.toLocal()` converts to phone time. | `AppDates.localDayOf` vs `AppDates.dayOf` |
+| **Selected / focused day** | Selected = the day whose agenda is shown. Focused = which week/month page the calendar is showing. | `CalendarState` in `lib/providers/calendar_provider.dart` |
+| **Agenda** | The list of tasks due on the selected day. | `selectedDayTasksProvider`, `AgendaList` |
+| **`select`** | `ref.watch(p.select((s) => s.x))` redraws/recomputes only when that one field changes. | `selectedDayTasksProvider` watches only `selectedDay` |
