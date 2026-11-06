@@ -27,4 +27,25 @@ void main() {
     expect(AppDates.isSameDay(DateTime(2026, 11, 5, 1), now), isTrue);
     expect(AppDates.dayOf(now), DateTime(2026, 11, 5));
   });
+
+  test('localDayOf uses the device time zone for UTC moments', () {
+    final utc = DateTime.utc(2026, 11, 5, 23, 30);
+    final local = utc.toLocal();
+    expect(
+      AppDates.localDayOf(utc),
+      DateTime(local.year, local.month, local.day),
+    );
+    expect(AppDates.localDayOf(now), DateTime(2026, 11, 5));
+  });
+
+  test('formatLongDay', () {
+    expect(
+      AppDates.formatLongDay(DateTime(2026, 11, 5), now),
+      'Thursday, Nov 5',
+    );
+    expect(
+      AppDates.formatLongDay(DateTime(2027, 1, 2), now),
+      'Saturday, Jan 2, 2027',
+    );
+  });
 }
