@@ -111,11 +111,21 @@ void main() {
         containsAll(['Work', 'Chores', 'Personal']),
       );
       expect(AppSettings().themeMode, ThemeMode.system);
+      expect(AppSettings().boardLayout, BoardLayout.rows);
+    });
+
+    test('unknown or missing board layout falls back to rows', () {
+      expect(AppSettings.fromJson({}).boardLayout, BoardLayout.rows);
+      expect(
+        AppSettings.fromJson({'boardLayout': 'diagonal'}).boardLayout,
+        BoardLayout.rows,
+      );
     });
 
     test('JSON round-trip', () {
       final settings = AppSettings(
         themeMode: ThemeMode.dark,
+        boardLayout: BoardLayout.columns,
         categories: const ['Work', 'Garden'],
         labels: const ['urgent'],
       );

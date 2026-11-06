@@ -23,6 +23,9 @@ class SettingsNotifier extends Notifier<AppSettings> {
   Future<void> setThemeMode(ThemeMode mode) =>
       replace(state.copyWith(themeMode: mode));
 
+  Future<void> setBoardLayout(BoardLayout layout) =>
+      replace(state.copyWith(boardLayout: layout));
+
   /// Adds a category if it's new (case-insensitive) and non-blank.
   Future<void> addCategory(String name) async {
     final updated = _addUnique(state.categories, name);
