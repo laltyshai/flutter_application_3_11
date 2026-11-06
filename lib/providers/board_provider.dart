@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../core/utils/random_picker.dart';
 import '../data/models/board_filter.dart';
 import '../data/models/task.dart';
+import 'random_provider.dart';
 import 'settings_provider.dart';
 import 'tasks_provider.dart';
 
@@ -78,29 +76,12 @@ List<String> _sortedUnique(Iterable<String> values) =>
     values.toSet().toList()
       ..sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
 
-/// Random source; overridden with a seeded [Random] in tests.
-final randomProvider = Provider<Random>((ref) => Random());
-
 /// Picks the "next task to tackle" from pending (To Do + In Progress) tasks
 /// that match the active filters.
-final nextTaskPickerProvider = Provider<NextTaskPicker>((ref) {
+final nextTaskPickerProvider = Provider<RandomTaskPicker>((ref) {
   final columns = ref.watch(boardColumnsProvider);
-  return NextTaskPicker([
+  return RandomTaskPicker([
     for (final entry in columns.entries)
       if (entry.key != TaskStatus.done) ...entry.value,
   ], ref.watch(randomProvider));
 });
-
-class NextTaskPicker {
-  NextTaskPicker(this.candidates, this._random);
-
-  final List<Task> candidates;
-  final Random _random;
-
-  /// A random candidate, avoiding [excludeId] when another one exists.
-  Task? pick({String? excludeId}) => pickRandom(
-    candidates,
-    _random,
-    exclude: excludeId == null ? null : (t) => t.id == excludeId,
-  );
-}
