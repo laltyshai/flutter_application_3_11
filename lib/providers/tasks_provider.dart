@@ -75,6 +75,19 @@ class TasksNotifier extends Notifier<List<Task>> {
     _reload();
   }
 
+  /// Writes [tasks] as they are (backup merge); other tasks stay.
+  Future<void> upsertAll(List<Task> tasks) async {
+    await _repo.upsertAll(tasks);
+    _reload();
+  }
+
+  /// Replaces every stored task with [tasks] (backup restore). Callers must
+  /// validate [tasks] first.
+  Future<void> replaceAll(List<Task> tasks) async {
+    await _repo.replaceAll(tasks);
+    _reload();
+  }
+
   Future<void> delete(String id) async {
     await _repo.delete(id);
     _reload();
