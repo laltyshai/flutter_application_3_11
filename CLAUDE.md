@@ -45,7 +45,7 @@ lib/
 ├── core/              # theme/, utils/ — imports nothing from data/, providers/, ui/
 ├── data/              # models/, db/, repositories/, services/ — no Flutter widgets, no providers
 ├── providers/         # Riverpod notifiers + derived providers
-└── ui/                # shell/, board/, calendar/, messy_can/, backup/, task/, widgets/
+└── ui/                # shell/, board/, calendar/, messy_can/, settings/, backup/, task/, widgets/
 ```
 
 ### Dependency direction (keep it this way)

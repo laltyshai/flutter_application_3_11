@@ -64,7 +64,9 @@ lib/
     messy_can_provider.dart      # derived: status == messyCan
     settings_provider.dart
   ui/
-    shell/home_shell.dart        # NavigationBar: Board · Calendar · Messy Can · Backup
+    shell/home_shell.dart        # NavigationBar: Board · Calendar · Messy Can · Settings
+    settings/settings_screen.dart # Theme + Backup & restore entry
+    settings/theme_mode_dialog.dart
     board/board_screen.dart
     board/kanban_column.dart
     board/filter_sort_sheet.dart
@@ -200,7 +202,7 @@ Each phase ends with the app building and running on an Android emulator, plus i
 
 ### Phase 8 — Polish & release prep
 - [ ] Empty states for every screen; loading/error states from `AsyncValue`.
-- [ ] Dark mode toggle in settings; respect system setting by default.
+- [x] Dark mode toggle in settings; respect system setting by default. The Backup tab became **Settings** (Theme · Backup & restore); `TaskTrackerApp` watches `settings.themeMode`, saved in Hive.
 - [ ] Accessibility: contrast check of pastel colors against charcoal text, semantic labels on icon buttons, large-text layout check.
 - [ ] Android: app name, launcher icon, `minSdk` check for plugins, release build (`flutter build apk --release`).
 - [ ] `flutter analyze` clean, all tests green.

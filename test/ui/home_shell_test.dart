@@ -38,7 +38,7 @@ void main() {
     const tabs = {
       'Calendar': 'Nothing scheduled',
       'Messy Can': 'The can is empty',
-      'Backup': 'Backup & restore',
+      'Settings': 'Backup & restore',
       'Board': 'No tasks yet',
     };
 

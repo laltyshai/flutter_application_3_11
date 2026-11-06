@@ -85,3 +85,9 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **Preview** | Counts shown before importing: total, new, existing, newer. | `ImportPreview` |
 | **Interface / fake** | An `abstract interface class` lists methods without code; the app uses a real implementation (file system, share sheet) and tests pass a fake one that records calls. | `BackupFileStore` / `FakeBackupFileStore` |
 | **Share intent** | Android's "Share to…" sheet that sends a file to another app. | `SystemBackupSharer` |
+
+## Settings
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Theme mode** | Which colors the app uses: System (follow the phone), Light or Dark. Saved in the settings box and read by `MaterialApp.themeMode`. | `AppSettings.themeMode`, `lib/app.dart`, `showThemeModeDialog` |

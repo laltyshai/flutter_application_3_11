@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../backup/backup_screen.dart';
 import '../board/board_screen.dart';
 import '../calendar/calendar_screen.dart';
 import '../messy_can/messy_can_screen.dart';
+import '../settings/settings_screen.dart';
 
 /// Bottom navigation with the four main areas of the app.
 /// Uses an [IndexedStack] so each tab keeps its scroll/state when switching.
@@ -22,7 +22,7 @@ class _HomeShellState extends State<HomeShell> {
     BoardScreen(),
     CalendarScreen(),
     MessyCanScreen(),
-    BackupScreen(),
+    SettingsScreen(),
   ];
 
   @override
@@ -49,9 +49,9 @@ class _HomeShellState extends State<HomeShell> {
             label: 'Messy Can',
           ),
           NavigationDestination(
-            icon: Icon(Icons.backup_outlined),
-            selectedIcon: Icon(Icons.backup),
-            label: 'Backup',
+            icon: Icon(Icons.settings_outlined),
+            selectedIcon: Icon(Icons.settings),
+            label: 'Settings',
           ),
         ],
       ),
