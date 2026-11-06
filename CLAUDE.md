@@ -18,6 +18,14 @@ short bullet points — no filler prose:
 
 Skip a section if it has nothing substantive. Do not pad.
 
+### Explanations (code-teacher and any "explain" answer)
+- Start with a short **Terms** list defining every technical word used, in plain language,
+  each tied to real code in this repo. Keep `docs/GLOSSARY.md` in sync: add new terms there.
+- Explain with the app's own things (tasks, the editor, the board), not invented objects.
+  No metaphors with made-up roles (e.g. "coat", "ticket", "hook"); if a comparison is truly
+  needed, say explicitly what each part maps to in the code.
+- Show real code from this repo and trace what happens step by step.
+
 ## Project facts
 
 - Local-first To-Do / Task Tracker, Android first. No backend; data lives in Hive (`hive_ce`).

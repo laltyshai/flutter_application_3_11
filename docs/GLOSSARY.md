@@ -1,0 +1,42 @@
+# Glossary
+
+Terms used in this codebase and in explanations. Each entry points to real code.
+
+## App data
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Task** | One to-do item with all its fields (title, status, priority, …). Saved in Hive. | `lib/data/models/task.dart` |
+| **Subtask** | A checklist line inside a task. Stored inside its task. | `lib/data/models/subtask.dart` |
+| **Status** | Which column/area a task is in: To Do, In Progress, Done, Messy Can. | `TaskStatus` |
+| **Draft** | An unsaved copy of a task's fields while you edit it. Becomes a real `Task` only when you press Save. | `TaskDraft` in `lib/providers/task_editor_provider.dart` |
+| **Box** | A Hive storage file, like one table. We have a `tasks` box and a `settings` box. | `lib/data/db/hive_setup.dart` |
+| **Repository** | A class that reads and writes one kind of data in a box. Nothing else talks to Hive directly. | `TaskRepository`, `SettingsRepository` |
+
+## Riverpod (state management)
+
+| Term | Meaning | In code |
+|---|---|---|
+| **State** | The data a screen shows right now. When it changes, the screen redraws. | `List<Task>` for `tasksProvider`; `TaskEditorState` for the editor |
+| **Notifier** | A class that owns one piece of state and is the only place allowed to change it. `build()` returns the starting state; its methods change it by assigning `state = …`. | `TasksNotifier`, `TaskEditorNotifier` |
+| **Provider** | A global variable that tells Riverpod how to create a notifier (or a value) and lets any widget find it by name. | `tasksProvider`, `taskEditorProvider` |
+| **Container / ProviderScope** | Where Riverpod keeps the notifiers it has created, so everyone asking for the same provider gets the same one. | `ProviderScope` in `lib/main.dart` |
+| **ref** | The handle a widget or notifier uses to talk to Riverpod. | `WidgetRef ref` in `build` |
+| **ref.watch(p)** | Get the current value **and** redraw this widget whenever it changes. Use in `build`. | `ref.watch(boardTasksProvider)` |
+| **ref.read(p)** | Get the value once, no redraw. Use in button callbacks and inside notifiers. | `ref.read(provider.notifier).save()` |
+| **ref.listen(p, …)** | Run a callback on every change, without redrawing. Also keeps the provider alive. | `container.listen(...)` in tests |
+| **`.notifier`** | `ref.read(p)` gives the *state*; `ref.read(p.notifier)` gives the *notifier* so you can call its methods. | `ref.read(taskEditorProvider(args).notifier)` |
+| **Derived provider** | A provider whose value is computed from other providers and recomputes when they change. | `boardTasksProvider` (from `tasksProvider`) |
+| **Family** | A provider that takes an argument. Riverpod keeps one separate notifier per distinct argument value. | `taskEditorProvider(args)` |
+| **Argument (args)** | The value passed to a family; it decides which notifier you get. | `TaskEditorArgs.edit(id)`, `TaskEditorArgs.create()` |
+| **autoDispose** | Riverpod deletes the notifier (and its state) as soon as nothing is watching or listening to it. | `NotifierProvider.autoDispose.family` |
+| **Override** | Replace a provider's value, e.g. with real Hive boxes in `main`, or test boxes and a fixed clock in tests. | `hiveBoxesProvider.overrideWithValue(boxes)` |
+
+## Dart
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Immutable** | An object whose fields never change after creation; to "change" it you make a new copy. | all models, `TaskEditorState` |
+| **copyWith** | Makes a copy of an immutable object with some fields replaced. | `task.copyWith(title: 'New')` |
+| **`==` / `hashCode`** | How Dart decides two objects count as "the same". By default only the exact same object is equal; overriding compares the fields instead. Maps (and Riverpod families) look keys up with these. | `TaskEditorArgs`, `Task` |
+| **Stateless / Stateful widget** | A stateless widget only draws what it's given. A stateful widget keeps its own changing data (we use it only for text controllers and the selected tab). | `TaskCard` vs `AddItemField` |
