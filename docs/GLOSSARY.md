@@ -11,6 +11,8 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **Status** | Which column/area a task is in: To Do, In Progress, Done, Messy Can. | `TaskStatus` |
 | **Draft** | An unsaved copy of a task's fields while you edit it. Becomes a real `Task` only when you press Save. | `TaskDraft` in `lib/providers/task_editor_provider.dart` |
 | **Box** | A Hive storage file, like one table. We have a `tasks` box and a `settings` box. | `lib/data/db/hive_setup.dart` |
+| **Board filter** | The chosen labels/categories/priorities plus sort order for the board. Inside one group any value matches; all groups must match. | `BoardFilter` in `lib/data/models/board_filter.dart` |
+| **Comparator** | A function `(a, b) → int` that says which of two tasks comes first (negative = `a` first). Each sort mode has one. | `TaskSortField.compare` |
 | **Repository** | A class that reads and writes one kind of data in a box. Nothing else talks to Hive directly. | `TaskRepository`, `SettingsRepository` |
 
 ## Riverpod (state management)
@@ -22,11 +24,11 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **Provider** | A global variable that tells Riverpod how to create a notifier (or a value) and lets any widget find it by name. | `tasksProvider`, `taskEditorProvider` |
 | **Container / ProviderScope** | Where Riverpod keeps the notifiers it has created, so everyone asking for the same provider gets the same one. | `ProviderScope` in `lib/main.dart` |
 | **ref** | The handle a widget or notifier uses to talk to Riverpod. | `WidgetRef ref` in `build` |
-| **ref.watch(p)** | Get the current value **and** redraw this widget whenever it changes. Use in `build`. | `ref.watch(boardTasksProvider)` |
+| **ref.watch(p)** | Get the current value **and** redraw this widget whenever it changes. Use in `build`. | `ref.watch(boardColumnsProvider)` |
 | **ref.read(p)** | Get the value once, no redraw. Use in button callbacks and inside notifiers. | `ref.read(provider.notifier).save()` |
 | **ref.listen(p, …)** | Run a callback on every change, without redrawing. Also keeps the provider alive. | `container.listen(...)` in tests |
 | **`.notifier`** | `ref.read(p)` gives the *state*; `ref.read(p.notifier)` gives the *notifier* so you can call its methods. | `ref.read(taskEditorProvider(args).notifier)` |
-| **Derived provider** | A provider whose value is computed from other providers and recomputes when they change. | `boardTasksProvider` (from `tasksProvider`) |
+| **Derived provider** | A provider whose value is computed from other providers and recomputes when they change. | `boardColumnsProvider` (from `tasksProvider` + `boardFilterProvider`) |
 | **Family** | A provider that takes an argument. Riverpod keeps one separate notifier per distinct argument value. | `taskEditorProvider(args)` |
 | **Argument (args)** | The value passed to a family; it decides which notifier you get. | `TaskEditorArgs.edit(id)`, `TaskEditorArgs.create()` |
 | **autoDispose** | Riverpod deletes the notifier (and its state) as soon as nothing is watching or listening to it. | `NotifierProvider.autoDispose.family` |
@@ -40,3 +42,14 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **copyWith** | Makes a copy of an immutable object with some fields replaced. | `task.copyWith(title: 'New')` |
 | **`==` / `hashCode`** | How Dart decides two objects count as "the same". By default only the exact same object is equal; overriding compares the fields instead. Maps (and Riverpod families) look keys up with these. | `TaskEditorArgs`, `Task` |
 | **Stateless / Stateful widget** | A stateless widget only draws what it's given. A stateful widget keeps its own changing data (we use it only for text controllers and the selected tab). | `TaskCard` vs `AddItemField` |
+
+## Flutter widgets (board)
+
+| Term | Meaning | In code |
+|---|---|---|
+| **PageView** | A horizontally swipeable list where each child fills one "page". The board shows one column per page. | `KanbanBoard` in `lib/ui/board/kanban_board.dart` |
+| **PageController** | Object that knows which page a `PageView` is on and can move it (`animateToPage`). | `_KanbanBoardState._controller` |
+| **LongPressDraggable** | Wraps a widget so a long press picks it up and it follows your finger; carries a value (`data`). | each card in `lib/ui/board/kanban_column.dart` |
+| **DragTarget** | An area that accepts a dragged value when you let go over it. | each `KanbanColumn` accepts a `Task` and calls `onMove` |
+| **Bottom sheet** | A panel that slides up from the bottom of the screen. | `FilterSortSheet.show` |
+| **Seeded Random** | `Random(42)` always produces the same sequence, so tests of random picking are repeatable. | `randomProvider` override in `test/providers/board_provider_test.dart` |

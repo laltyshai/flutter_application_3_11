@@ -162,11 +162,11 @@ Each phase ends with the app building and running on an Android emulator, plus i
 - [x] Tests: date helpers, editor notifier, `TaskCard` widget tests, editor create/discard/edit/delete widget tests (in-memory Hive via `test/helpers/`).
 
 ### Phase 4 — Kanban board
-- [ ] Horizontal `PageView` with columns To Do · In Progress · Done (column header shows count).
-- [ ] Long-press drag a card onto another column → status change; auto-scroll to neighbor page when dragging near the edge.
-- [ ] Filter/sort bottom sheet: multi-select labels, categories, priorities; sort by due date / priority / created date (asc/desc). Active filters shown as removable chips.
-- [ ] **Random Idea Picker** FAB/action: random task from To Do + In Progress (respecting active filters) → `RandomPickDialog` "Your Next Task to Tackle!" with *Open*, *Start (move to In Progress)*, *Pick again*.
-- [ ] Tests: filter/sort logic as pure functions; random picker with seeded `Random`.
+- [x] Horizontal `PageView` (`KanbanBoard`, neighbors peek in) with columns To Do · In Progress · Done; column header shows count, tap to jump.
+- [x] Long-press drag a card onto another column → status change; auto-scroll to neighbor page when dragging near the edge (one flip per 700 ms).
+- [x] Filter/sort bottom sheet (`FilterSortSheet`): multi-select labels, categories, priorities; sort by due date / priority / created date (asc/desc). Active filters shown as removable chips (`ActiveFilterChips`). Filter state is session-only (`boardFilterProvider`).
+- [x] **Random Idea Picker** app-bar action: random task from To Do + In Progress (respecting active filters) → `showRandomPickDialog` "Your Next Task to Tackle!" with *Open*, *Start (move to In Progress)*, *Pick again* (never the same task twice in a row).
+- [x] Tests: `BoardFilter` match/sort as pure functions, `pickRandom` with seeded `Random`, board providers, board widget tests (columns, drag, filter chips, random dialog).
 
 ### Phase 5 — Calendar
 - [ ] `table_calendar` week/month toggle with dot markers on days that have tasks.
