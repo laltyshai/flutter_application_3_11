@@ -65,7 +65,7 @@ lib/
     settings_provider.dart
   ui/
     shell/home_shell.dart        # NavigationBar: Board · Calendar · Messy Can · Settings
-    settings/settings_screen.dart # Theme + Backup & restore entry
+    settings/settings_screen.dart # Theme + board layout switches (inline) + Backup & restore entry
     settings/setting_options.dart # Theme + board layout choices
     board/board_screen.dart
     board/kanban_column.dart

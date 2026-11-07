@@ -91,5 +91,6 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | Term | Meaning | In code |
 |---|---|---|
 | **Board layout** | How the board shows statuses: Rows (each status a horizontal strip of cards, up to 2 rows, swipe sideways) or Columns (each status a page you swipe between). Saved in settings. | `BoardLayout`, `KanbanRows`, `KanbanBoard` |
-| **Option dialog** | A reusable pop-up listing choices with a check on the current one; Settings uses it for Theme and Board layout. | `showOptionDialog` in `lib/ui/widgets/option_dialog.dart` |
+| **Setting choice** | A reusable card that shows every option of a setting as a row of buttons; one tap changes it, no dialog. Settings uses it for Theme and Board layout. | `SettingChoice` in `lib/ui/widgets/setting_choice.dart` |
+| **Segmented button** | Flutter's row of joined buttons where exactly one is selected. | `SegmentedButton` inside `SettingChoice` |
 | **Theme mode** | Which colors the app uses: System (follow the phone), Light or Dark. Saved in the settings box and read by `MaterialApp.themeMode`. | `AppSettings.themeMode`, `lib/app.dart`, `showThemeModeDialog` |
