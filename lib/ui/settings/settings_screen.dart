@@ -1,36 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../data/models/app_settings.dart';
 import '../../providers/settings_provider.dart';
 import '../backup/backup_screen.dart';
-import 'theme_mode_dialog.dart';
+import '../widgets/setting_choice.dart';
+import 'setting_options.dart';
 
-/// Settings tab: theme choice and the way into Backup & restore.
+/// Settings tab: theme, board layout, and the way into Backup & restore.
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(settingsProvider.select((s) => s.themeMode));
+    final settings = ref.watch(settingsProvider);
+    final notifier = ref.read(settingsProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          _SettingsTile(
+          SettingChoice<ThemeMode>(
             icon: Icons.palette_outlined,
             title: 'Theme',
-            subtitle: themeModeLabel(themeMode),
-            onTap: () async {
-              final picked = await showThemeModeDialog(
-                context,
-                current: themeMode,
-              );
-              if (picked != null) {
-                await ref.read(settingsProvider.notifier).setThemeMode(picked);
-              }
-            },
+            options: themeModeOptions,
+            selected: settings.themeMode,
+            onChanged: notifier.setThemeMode,
+          ),
+          const SizedBox(height: 8),
+          SettingChoice<BoardLayout>(
+            icon: Icons.view_kanban_outlined,
+            title: 'Board layout',
+            options: boardLayoutOptions,
+            selected: settings.boardLayout,
+            onChanged: notifier.setBoardLayout,
           ),
           const SizedBox(height: 8),
           _SettingsTile(
