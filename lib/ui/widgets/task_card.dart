@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../../core/utils/date_utils.dart';
 import '../../data/models/task.dart';
 import 'category_badge.dart';
+import 'label_chip.dart';
 import 'priority_indicator.dart';
 
-/// Compact task summary: priority, title, category, subtask ratio, due date,
+/// Compact task summary: priority, title, labels, category, subtask ratio,
+/// due date,
 /// and (when [onDoneChanged] is given) a "done" checkbox on the right.
 class TaskCard extends StatelessWidget {
   const TaskCard({
@@ -72,6 +74,17 @@ class TaskCard extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (task.labels.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          for (final label in task.labels)
+                            LabelChip(label: label),
+                        ],
+                      ),
+                    ],
                     const SizedBox(height: 8),
                     Wrap(
                       spacing: 8,

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_3_11/core/theme/app_theme.dart';
 import 'package:flutter_application_3_11/data/models/subtask.dart';
 import 'package:flutter_application_3_11/data/models/task.dart';
+import 'package:flutter_application_3_11/core/theme/label_colors.dart';
+import 'package:flutter_application_3_11/ui/widgets/label_chip.dart';
 import 'package:flutter_application_3_11/ui/widgets/priority_indicator.dart';
 import 'package:flutter_application_3_11/ui/widgets/task_card.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,6 +13,7 @@ void main() {
 
   Task task({
     TaskStatus status = TaskStatus.todo,
+    List<String> labels = const [],
     DateTime? dueDate,
     List<Subtask> subtasks = const [],
   }) => Task(
@@ -19,6 +22,7 @@ void main() {
     status: status,
     priority: TaskPriority.high,
     category: 'Work',
+    labels: labels,
     dueDate: dueDate,
     subtasks: subtasks,
     createdAt: now,
@@ -145,5 +149,23 @@ void main() {
 
     await tester.tap(find.byType(Checkbox));
     expect(calls, [false]);
+  });
+
+  testWidgets('shows each label as a colored chip', (tester) async {
+    await pumpCard(tester, task());
+    expect(find.byType(LabelChip), findsNothing);
+
+    await pumpCard(tester, task(labels: ['home', 'urgent']));
+    expect(find.byType(LabelChip), findsNWidgets(2));
+    expect(find.text('home'), findsOneWidget);
+    expect(find.text('urgent'), findsOneWidget);
+
+    final pill = tester.widget<Container>(
+      find.descendant(
+        of: find.widgetWithText(LabelChip, 'urgent'),
+        matching: find.byType(Container),
+      ),
+    );
+    expect((pill.decoration! as BoxDecoration).color, LabelColors.of('urgent'));
   });
 }
