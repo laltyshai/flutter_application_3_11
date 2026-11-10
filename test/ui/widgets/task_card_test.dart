@@ -25,15 +25,24 @@ void main() {
     updatedAt: now,
   );
 
-  Future<void> pumpCard(WidgetTester tester, Task t, {VoidCallback? onTap}) =>
-      tester.pumpWidget(
-        MaterialApp(
-          theme: AppTheme.light(),
-          home: Scaffold(
-            body: TaskCard(task: t, now: now, onTap: onTap),
-          ),
+  Future<void> pumpCard(
+    WidgetTester tester,
+    Task t, {
+    VoidCallback? onTap,
+    ValueChanged<bool>? onDoneChanged,
+  }) => tester.pumpWidget(
+    MaterialApp(
+      theme: AppTheme.light(),
+      home: Scaffold(
+        body: TaskCard(
+          task: t,
+          now: now,
+          onTap: onTap,
+          onDoneChanged: onDoneChanged,
         ),
-      );
+      ),
+    ),
+  );
 
   testWidgets('shows title, category and priority', (tester) async {
     await pumpCard(tester, task());
@@ -90,5 +99,51 @@ void main() {
 
     await tester.tap(find.byType(TaskCard));
     expect(taps, 1);
+  });
+
+  testWidgets('no checkbox unless onDoneChanged is given', (tester) async {
+    await pumpCard(tester, task());
+    expect(find.byType(Checkbox), findsNothing);
+  });
+
+  testWidgets('checkbox sits on the right and reports ticks', (tester) async {
+    final calls = <bool>[];
+    var taps = 0;
+    await pumpCard(
+      tester,
+      task(),
+      onTap: () => taps++,
+      onDoneChanged: calls.add,
+    );
+
+    final box = tester.getRect(find.byType(Checkbox));
+    final card = tester.getRect(find.byType(TaskCard));
+    final title = tester.getRect(find.text('Write report'));
+    expect(box.left, greaterThanOrEqualTo(title.right));
+    expect(box.center.dx, greaterThan(card.center.dx));
+    expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
+    expect(
+      find.bySemanticsLabel('Mark "Write report" as done'),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byType(Checkbox));
+    expect(calls, [true]);
+    expect(taps, 0); // ticking doesn't open the task
+  });
+
+  testWidgets('done task shows a ticked box; clearing it reports false', (
+    tester,
+  ) async {
+    final calls = <bool>[];
+    await pumpCard(
+      tester,
+      task(status: TaskStatus.done),
+      onDoneChanged: calls.add,
+    );
+    expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isTrue);
+
+    await tester.tap(find.byType(Checkbox));
+    expect(calls, [false]);
   });
 }
