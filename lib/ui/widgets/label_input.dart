@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../core/theme/label_colors.dart';
 import 'add_item_field.dart';
 
 /// Current labels as removable chips, known labels as quick-add suggestions,
@@ -36,10 +37,9 @@ class LabelInput extends StatelessWidget {
             runSpacing: 8,
             children: [
               for (final label in labels)
-                InputChip(
-                  label: Text(label),
+                _ColoredLabelChip(
+                  label: label,
                   onDeleted: () => onRemove(label),
-                  deleteButtonTooltipMessage: 'Remove $label',
                 ),
             ],
           ),
@@ -59,6 +59,8 @@ class LabelInput extends StatelessWidget {
               for (final s in unused)
                 ActionChip(
                   avatar: const Icon(Icons.add, size: 16),
+                  // Colored edge previews the color the label will get.
+                  side: BorderSide(color: LabelColors.of(s), width: 2),
                   label: Text(s),
                   onPressed: () => onAdd(s),
                 ),
@@ -66,6 +68,29 @@ class LabelInput extends StatelessWidget {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Removable label chip in the label's own color (same as on cards).
+class _ColoredLabelChip extends StatelessWidget {
+  const _ColoredLabelChip({required this.label, required this.onDeleted});
+
+  final String label;
+  final VoidCallback onDeleted;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = LabelColors.of(label);
+    final onColor = LabelColors.onColor(color);
+    return InputChip(
+      label: Text(label),
+      labelStyle: TextStyle(color: onColor, fontWeight: FontWeight.w600),
+      backgroundColor: color,
+      side: BorderSide.none,
+      deleteIconColor: onColor,
+      onDeleted: onDeleted,
+      deleteButtonTooltipMessage: 'Remove $label',
     );
   }
 }
