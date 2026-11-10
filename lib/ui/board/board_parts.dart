@@ -117,6 +117,7 @@ class DraggableTaskCard extends StatelessWidget {
     required this.width,
     required this.onOpen,
     this.onDragUpdate,
+    this.onDoneChanged,
   });
 
   final Task task;
@@ -127,9 +128,18 @@ class DraggableTaskCard extends StatelessWidget {
   final ValueChanged<Task> onOpen;
   final ValueChanged<DragUpdateDetails>? onDragUpdate;
 
+  /// Called when a card's done checkbox is ticked or cleared.
+  final void Function(Task task, bool done)? onDoneChanged;
+
   @override
   Widget build(BuildContext context) {
-    final card = TaskCard(task: task, now: now, onTap: () => onOpen(task));
+    final onDone = onDoneChanged;
+    final card = TaskCard(
+      task: task,
+      now: now,
+      onTap: () => onOpen(task),
+      onDoneChanged: onDone == null ? null : (done) => onDone(task, done),
+    );
     return LongPressDraggable<Task>(
       data: task,
       onDragUpdate: onDragUpdate,

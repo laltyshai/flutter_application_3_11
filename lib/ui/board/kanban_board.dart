@@ -14,12 +14,16 @@ class KanbanBoard extends StatefulWidget {
     required this.now,
     required this.onOpen,
     required this.onMove,
+    this.onDoneChanged,
   });
 
   final Map<TaskStatus, List<Task>> columns;
   final DateTime now;
   final ValueChanged<Task> onOpen;
   final void Function(Task task, TaskStatus to) onMove;
+
+  /// Called when a card's done checkbox is ticked or cleared.
+  final void Function(Task task, bool done)? onDoneChanged;
 
   /// Width of the edge zone that triggers auto-scroll while dragging.
   static const edgeWidth = 48.0;
@@ -90,6 +94,7 @@ class _KanbanBoardState extends State<KanbanBoard> {
             onMove: widget.onMove,
             onHeaderTap: () => _goTo(i),
             onDragUpdate: _onDragUpdate,
+            onDoneChanged: widget.onDoneChanged,
           ),
         );
       },

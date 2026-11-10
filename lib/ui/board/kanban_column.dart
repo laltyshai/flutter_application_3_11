@@ -15,6 +15,7 @@ class KanbanColumn extends StatelessWidget {
     required this.onMove,
     this.onHeaderTap,
     this.onDragUpdate,
+    this.onDoneChanged,
   });
 
   final TaskStatus status;
@@ -26,6 +27,9 @@ class KanbanColumn extends StatelessWidget {
   final void Function(Task task, TaskStatus to) onMove;
   final VoidCallback? onHeaderTap;
   final ValueChanged<DragUpdateDetails>? onDragUpdate;
+
+  /// Called when a card's done checkbox is ticked or cleared.
+  final void Function(Task task, bool done)? onDoneChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,7 @@ class KanbanColumn extends StatelessWidget {
                         width: constraints.maxWidth - 16,
                         onOpen: onOpen,
                         onDragUpdate: onDragUpdate,
+                        onDoneChanged: onDoneChanged,
                       ),
                     ),
                   ),
