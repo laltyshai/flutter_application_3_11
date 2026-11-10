@@ -79,17 +79,11 @@ class _AgendaTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Checkbox(
-          value: task.status == TaskStatus.done,
-          semanticLabel: 'Done: ${task.title}',
-          onChanged: (v) => onDoneChanged(v ?? false),
-        ),
-        Expanded(
-          child: TaskCard(task: task, now: now, onTap: onOpen),
-        ),
-      ],
+    return TaskCard(
+      task: task,
+      now: now,
+      onTap: onOpen,
+      onDoneChanged: onDoneChanged,
     );
   }
 }
