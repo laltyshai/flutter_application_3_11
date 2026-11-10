@@ -94,3 +94,12 @@ Terms used in this codebase and in explanations. Each entry points to real code.
 | **Setting choice** | A reusable card that shows every option of a setting as a row of buttons; one tap changes it, no dialog. Settings uses it for Theme and Board layout. | `SettingChoice` in `lib/ui/widgets/setting_choice.dart` |
 | **Segmented button** | Flutter's row of joined buttons where exactly one is selected. | `SegmentedButton` inside `SettingChoice` |
 | **Theme mode** | Which colors the app uses: System (follow the phone), Light or Dark. Saved in the settings box and read by `MaterialApp.themeMode`. | `AppSettings.themeMode`, `lib/app.dart`, `showThemeModeDialog` |
+
+## Labels
+
+| Term | Meaning | In code |
+|---|---|---|
+| **Label chip** | A GitHub-style colored pill showing one label on a task card. | `LabelChip` in `lib/ui/widgets/label_chip.dart` |
+| **Label color** | Each label looks randomly colored, but the color is picked from a fixed palette by hashing the label's name, so "home" is the same color everywhere and after restarts. | `LabelColors.of`, `AppColors.labelPalette` |
+| **Hash** | A function that turns text into a number; the same text always gives the same number. We use FNV-1a because Dart's `String.hashCode` may change between versions. | `LabelColors._hash` |
+| **Contrast ratio** | How different two colors' brightness is (1:1 to 21:1). Text needs at least 4.5:1 to be easy to read (WCAG AA). | `LabelColors.onColor`, `test/core/theme/label_colors_test.dart` |
