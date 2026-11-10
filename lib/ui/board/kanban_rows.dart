@@ -16,12 +16,16 @@ class KanbanRows extends StatefulWidget {
     required this.now,
     required this.onOpen,
     required this.onMove,
+    this.onDoneChanged,
   });
 
   final Map<TaskStatus, List<Task>> columns;
   final DateTime now;
   final ValueChanged<Task> onOpen;
   final void Function(Task task, TaskStatus to) onMove;
+
+  /// Called when a card's done checkbox is ticked or cleared.
+  final void Function(Task task, bool done)? onDoneChanged;
 
   /// Cards per status are laid out in at most this many rows.
   static const maxRows = 2;
@@ -94,6 +98,7 @@ class _KanbanRowsState extends State<KanbanRows> {
           onOpen: widget.onOpen,
           onMove: widget.onMove,
           onDragUpdate: _onDragUpdate,
+          onDoneChanged: widget.onDoneChanged,
         );
       },
     );
@@ -109,6 +114,7 @@ class _StatusRow extends StatelessWidget {
     required this.onOpen,
     required this.onMove,
     required this.onDragUpdate,
+    required this.onDoneChanged,
   });
 
   final TaskStatus status;
@@ -117,6 +123,7 @@ class _StatusRow extends StatelessWidget {
   final ValueChanged<Task> onOpen;
   final void Function(Task task, TaskStatus to) onMove;
   final ValueChanged<DragUpdateDetails> onDragUpdate;
+  final void Function(Task task, bool done)? onDoneChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +172,7 @@ class _StatusRow extends StatelessWidget {
                                       width: cardWidth,
                                       onOpen: onOpen,
                                       onDragUpdate: onDragUpdate,
+                                      onDoneChanged: onDoneChanged,
                                     ),
                                   ),
                                 ),

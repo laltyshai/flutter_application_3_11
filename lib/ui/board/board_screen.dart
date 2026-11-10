@@ -34,6 +34,8 @@ class BoardScreen extends ConsumerWidget {
     void onOpen(Task task) => _open(context, task);
     void onMove(Task task, TaskStatus to) =>
         ref.read(tasksProvider.notifier).moveTo(task.id, to);
+    void onDoneChanged(Task task, bool done) =>
+        ref.read(tasksProvider.notifier).setDone(task.id, done);
 
     return Scaffold(
       appBar: AppBar(
@@ -85,12 +87,14 @@ class BoardScreen extends ConsumerWidget {
                       now: now,
                       onOpen: onOpen,
                       onMove: onMove,
+                      onDoneChanged: onDoneChanged,
                     ),
                     BoardLayout.columns => KanbanBoard(
                       columns: columns,
                       now: now,
                       onOpen: onOpen,
                       onMove: onMove,
+                      onDoneChanged: onDoneChanged,
                     ),
                   },
                 ),

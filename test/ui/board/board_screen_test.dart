@@ -115,6 +115,36 @@ void main() {
     expect(find.text('Edit task'), findsOneWidget);
   });
 
+  testWidgets('rows: ticking the card checkbox moves it to Done', (
+    tester,
+  ) async {
+    final container = await pumpBoard(tester, [seed('Finish me')]);
+
+    await tester.tap(find.bySemanticsLabel('Mark "Finish me" as done'));
+    await tester.pumpAndSettle();
+    expect(byTitle(container, 'Finish me').status, TaskStatus.done);
+
+    // Clearing it on the Done card sends it back to To Do.
+    final undo = find.bySemanticsLabel('Mark "Finish me" as not done');
+    await tester.ensureVisible(undo);
+    await tester.pumpAndSettle();
+    await tester.tap(undo);
+    await tester.pumpAndSettle();
+    expect(byTitle(container, 'Finish me').status, TaskStatus.todo);
+  });
+
+  testWidgets('columns: ticking the card checkbox moves it to Done', (
+    tester,
+  ) async {
+    final container = await pumpBoard(tester, [
+      seed('Column task'),
+    ], layout: BoardLayout.columns);
+
+    await tester.tap(find.bySemanticsLabel('Mark "Column task" as done'));
+    await tester.pumpAndSettle();
+    expect(byTitle(container, 'Column task').status, TaskStatus.done);
+  });
+
   testWidgets('shows columns with task counts', (tester) async {
     await pumpBoard(tester, [
       seed('A'),
@@ -198,6 +228,10 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Your Next Task to Tackle!'), findsOneWidget);
     final dialog = find.byType(AlertDialog);
+    expect(
+      find.descendant(of: dialog, matching: find.byType(Checkbox)),
+      findsNothing,
+    );
     expect(
       find.descendant(of: dialog, matching: find.text('Only one')),
       findsOneWidget,
