@@ -13,5 +13,5 @@
 12) app icon
 13) bin animation
 14) enable repeating task (every day, week, custom)
-15) make settings as accessible as possible: board and theme switches should be shown directly in settings content
-16) 
++ 15) make settings as accessible as possible: board and theme switches should be shown directly in settings content +
++ 16) checkboxes in task cards
